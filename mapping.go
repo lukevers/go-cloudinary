@@ -36,3 +36,39 @@ func (s *Service) ListUploadMappings() (*ListUploadMappingsOutput, error) {
 
 	return output, nil
 }
+
+type CreateUploadMappingInput struct {
+	Mapping *Mapping
+}
+
+type CreateUploadMappingOutput struct {
+	Message string `json:"message"`
+}
+
+func (s *Service) CreateUploadMapping(input *CreateUploadMappingInput) (*CreateUploadMappingOutput, error) {
+	uri := fmt.Sprintf(
+		"%s/upload_mappings?folder=%s&template=%s",
+		s.adminURI.String(),
+		input.Mapping.Folder,
+		input.Mapping.Template,
+	)
+
+	req, err := http.NewRequest("POST", uri, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	dec := json.NewDecoder(resp.Body)
+	output := &CreateUploadMappingOutput{}
+	if err := dec.Decode(output); err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
