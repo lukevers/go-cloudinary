@@ -83,7 +83,7 @@ type DeleteUploadMappingOutput struct {
 
 func (s *Service) DeleteUploadMapping(input *DeleteUploadMappingInput) (*DeleteUploadMappingOutput, error) {
 	uri := fmt.Sprintf(
-		"%s/upload_mappings/%s",
+		"%s/upload_mappings?folder=%s",
 		s.adminURI.String(),
 		input.Folder,
 	)
