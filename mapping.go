@@ -72,3 +72,38 @@ func (s *Service) CreateUploadMapping(input *CreateUploadMappingInput) (*CreateU
 
 	return output, nil
 }
+
+type DeleteUploadMappingInput struct {
+	Folder string
+}
+
+type DeleteUploadMappingOutput struct {
+	Message string `json:"message"`
+}
+
+func (s *Service) DeleteUploadMapping(input *DeleteUploadMappingInput) (*DeleteUploadMappingOutput, error) {
+	uri := fmt.Sprintf(
+		"%s/upload_mappings/%s",
+		s.adminURI.String(),
+		input.Folder,
+	)
+
+	req, err := http.NewRequest("DELETE", uri, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+
+	defer resp.Body.Close()
+	dec := json.NewDecoder(resp.Body)
+	output := &DeleteUploadMappingOutput{}
+	if err := dec.Decode(output); err != nil {
+		return nil, err
+	}
+
+	return output, nil
+}
